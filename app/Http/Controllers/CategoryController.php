@@ -8,12 +8,15 @@ use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
+    const PATH_VIEW = 'categories.';
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $data = Category::query()->latest('id')->paginate(5);
+
+        return view(self::PATH_VIEW . __FUNCTION__, compact('data'));
     }
 
     /**
@@ -21,7 +24,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view(self::PATH_VIEW . __FUNCTION__);
     }
 
     /**
@@ -29,7 +32,11 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        Category::query()->create($request->all());
+
+        return redirect()
+        ->route('categories.index')
+        ->with('msg', 'Thêm thành công');
     }
 
     /**
@@ -37,7 +44,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return view(self::PATH_VIEW . __FUNCTION__,compact('category'));
     }
 
     /**
@@ -45,7 +52,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+
+        return view(self::PATH_VIEW . __FUNCTION__,compact('category'));
     }
 
     /**
@@ -53,7 +61,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        $category->update($request->all());
+        return back()->with('msg', 'Cập nhật thành công');
     }
 
     /**
@@ -61,6 +70,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return back()->with('msg', 'Xóa thành công');
     }
 }
